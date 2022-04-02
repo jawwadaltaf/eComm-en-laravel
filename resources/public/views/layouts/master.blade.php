@@ -48,8 +48,8 @@ img.slider-img{
 </head>
 
 <body>
-{{View::make('header')}}
+{{View::make('components.header')}}
 @yield('content')
-{{View::make('footer')}}
+{{View::make('components.footer')}}
 </body>
 </html>

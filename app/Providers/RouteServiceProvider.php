@@ -17,8 +17,10 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
+	 
     public const HOME = '/home';
-
+	protected $namespace = 'App\Http\Controllers\Public';//for public controller
+	protected $appRoute = 'web.php';
     /**
      * The controller namespace for the application.
      *
@@ -35,6 +37,22 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+		
+		$appScope = config('app.app_scope');
+		
+		
+		if ($appScope == 'public') {
+			$this->namespace = 'App\Http\Controllers\Public';
+			$this->appRoute = 'web';
+		}
+	
+		if ($appScope == 'admin') {
+			$this->namespace = 'App\Http\Controllers\Admin';
+			$this->appRoute = 'admin';
+		}
+		
+		
+	
         $this->configureRateLimiting();
 
         $this->routes(function () {
@@ -43,9 +61,9 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->group(base_path('routes/api.php'));
 
-            Route::middleware('web')
+            Route::middleware($this->appRoute)
                 ->namespace($this->namespace)
-                ->group(base_path('routes/web.php'));
+                ->group(base_path('routes/'.$this->appRoute.'.php'));
         });
     }
 
@@ -60,4 +78,14 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
         });
     }
+	
+	
+	/*protected function mapWebRoutes()
+	{
+		
+	
+		Route::middleware('web')
+		->namespace($this->namespace)
+		->group(base_path('routes/web.php'));
+	}*/
 }
